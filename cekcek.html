@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Çek Tulumbayı V2</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        #sonuc { margin-top: 20px; font-size: 28px; font-weight: bold; }
+        button {
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 9999;
+            position: relative;          
+        }
+    </style>
+</head>
+<body>
+
+<h2>Çek Tulumbayı V2</h2>
+
+
+<div id="gifContainer">
+    <img id="cekilisGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdm53MGtvMGhsYXV3c2ptZm50cGpyMTloOWVsdXkwZjhpb3NybHpxMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/JSWu7FReUWYvVbOfEs/giphy.gif" 
+         style="display:none; width:300px;">
+</div>
+
+<button id="btnCekilis">Çekiliş Yap</button>
+
+
+<div id="sonuc"></div>
+
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-database-compat.js"></script>
+
+
+<script>
+    
+    document.addEventListener("DOMContentLoaded", function() {
+    const btn = document.getElementById("btnCekilis");
+
+    btn.addEventListener("click", cekilisYap);
+    btn.addEventListener("touchend", cekilisYap, { passive: false });
+    });
+    
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyAzVcWvRhmfBmHelaAsnXAqcEF-_O0xjlA",
+    authDomain: "cek-tulumbayi.firebaseapp.com",
+    databaseURL: "https://cek-tulumbayi-default-rtdb.firebaseio.com/",
+    projectId: "cek-tulumbayi",
+    storageBucket: "cek-tulumbayi.firebasestorage.app",
+    messagingSenderId: "963289261866",
+    appId: "1:963289261866:web:5410872ad8a6d1c02a6053"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    async function cekilisYap() {
+        const sonucDiv = document.getElementById("sonuc");
+        sonucDiv.innerText = "Yükleniyor...";
+
+        try {
+            
+            const snapshot = await db.ref("/").get();
+
+            if (!snapshot.exists()) {
+                sonucDiv.innerText = "Database boş!";
+                return;
+            }
+
+            const data = snapshot.val();
+            const isimler = Object.values(data);
+            const keys = Object.keys(data); 
+
+        
+            const randomIndex = Math.floor(Math.random() * isimler.length);
+            const secilenIsim = isimler[randomIndex];
+            const firebaseKey = keys[randomIndex]; 
+
+            sonucDiv.innerText = "Çekilen kişi: " + secilenIsim;
+
+            const btn = document.getElementById("btnCekilis");
+            btn.disabled = true;
+            const gif = document.getElementById("cekilisGif");
+            gif.style.display = "block";
+
+            await db.ref(firebaseKey).remove();
+            
+
+        } catch (err) {
+            sonucDiv.innerText = "Hata: " + err;
+        }
+    }
+</script>
+
+</body>
+</html>
