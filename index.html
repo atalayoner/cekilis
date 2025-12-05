@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             sonucDiv.innerText = "🎉 Çekilen Kişi: " + secilenIsim;
 
-            //await db.ref(firebaseKey).remove();
+            await db.ref(firebaseKey).remove();
 
             baslatKonfeti();  
             setTimeout(() => {
@@ -189,3 +189,4 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
+
